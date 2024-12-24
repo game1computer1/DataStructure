@@ -56,8 +56,8 @@ void initgraph(GraphMatrix& graph, int length,char args[],char kwargs[])
 {
     int i, j;
     map<string, int> point_map; // 点名与索引的映射表
-    ifstream points_file("args"); // 读取点文件
-    ifstream path_file("kwargs"); // 读取路径文件
+    ifstream points_file(args); // 读取点文件
+    ifstream path_file(kwargs); // 读取路径文件
     string line, name, from, to;
     float distance;
 
