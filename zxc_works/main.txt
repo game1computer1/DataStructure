@@ -104,7 +104,8 @@ void initgraph(GraphMatrix& graph, int length)
             {
                 int u = point_map[from]; // 起点索引
                 int v = point_map[to]; // 终点索引
-                graph.arcs[u][v] = distance; // 设置边的权值
+                graph.arcs[u][v] = distance; 
+                graph.arcs[v][u] = distance; // 设置边的权值
             }
             else
             {
