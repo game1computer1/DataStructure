@@ -31,30 +31,30 @@ typedef struct
     int prevex; // 该顶点的前驱顶点索引
 } Path;
 
-Path dist[10];
+Path dist[MAXVertex][MAXVertex];
 
 // 判断某顶点是否已在最短路径集合中的布尔数组
-bool S[10];
+bool S[MAXVertex][MAXVertex];
 
 // 初始化迪杰斯特拉算法的辅助数据结构
-void init(GraphMatrix graph, Path dist[],int start)
+void init(GraphMatrix graph, int start)
 {
     int i;
-    dist[start].length = 0; // 源点到自己的距离为0
-    dist[start].prevex = 0; // 源点没有前驱
-    dist[start].vertex = graph.vexs[start]; // 源点的信息
-    S[start] = true; // 源点加入最短路径集合
+    dist[start][start].length = 0; // 源点到自己的距离为0
+    dist[start][start].prevex = 0; // 源点没有前驱
+    dist[start][start].vertex = graph.vexs[start]; // 源点的信息
+    S[start][start] = true; // 源点加入最短路径集合
 
     // 初始化其他顶点到源点的距离
     for (i = 0; i < graph.n; i++)
     {
         if (i != start) {
-            dist[i].length = graph.arcs[start][i]; // 初始距离为邻接矩阵中的值
-            dist[i].vertex = graph.vexs[i]; // 顶点信息
-            if (dist[i].length != MAX)
-                dist[i].prevex = start; // 如果有路径，则前驱为源点
+            dist[start][i].length = graph.arcs[start][i]; // 初始距离为邻接矩阵中的值
+            dist[start][i].vertex = graph.vexs[i]; // 顶点信息
+            if (dist[start][i].length != MAX)
+                dist[start][i].prevex = start; // 如果有路径，则前驱为源点
             else
-                dist[i].prevex = -1; // 否则前驱不存在
+                dist[start][i].prevex = -1; // 否则前驱不存在
         }
         
     }
@@ -137,7 +137,7 @@ void dijkstra(GraphMatrix& graph, int start)
     float min;
 
     // 初始化
-    init(graph, dist, start);
+    init(graph, start);
 
     // Dijkstra 算法主循环
     for (i = 1; i < graph.n; i++) 
@@ -146,23 +146,23 @@ void dijkstra(GraphMatrix& graph, int start)
         min = MAX;
         for (j = 0; j < graph.n; j++)
         {
-            if (!S[j] && dist[j].length < min)
+            if (!S[start][j] && dist[start][j].length < min)
             {
-                min = dist[j].length;
+                min = dist[start][j].length;
                 k = j;
             }
         }
 
         // 将当前顶点k加入最短路径集合
-        S[k] = true;
+        S[start][k] = true;
 
         // 更新与当前顶点k相邻的未处理顶点的路径信息
         for (j = 0; j < graph.n; j++)
         {
-            if (!S[j] && graph.arcs[k][j] != MAX && dist[k].length + graph.arcs[k][j] < dist[j].length)
+            if (!S[start][j] && graph.arcs[k][j] != MAX && dist[start][k].length + graph.arcs[k][j] < dist[start][j].length)
             {
-                dist[j].length = dist[k].length + graph.arcs[k][j];
-                dist[j].prevex = k;
+                dist[start][j].length = dist[start][k].length + graph.arcs[k][j];
+                dist[start][j].prevex = k;
             }
         }
     }
@@ -174,19 +174,19 @@ void printShortestPath(GraphMatrix& graph, int start)
     for (int i = 0; i < graph.n; i++)
     {
         cout << "From " << graph.vexs[start] << " to " << graph.vexs[i] << " : ";
-        if (dist[i].length == MAX)
+        if (dist[start][i].length == MAX)
         {
             cout << "No path" << endl;
         }
         else
         {
-            cout << "Length = " << dist[i].length << ", Path = ";
+            cout << "Length = " << dist[start][i].length << ", Path = ";
             vector<string> path;
             int p = i;
             while (p != start)
             {
                 path.push_back(graph.vexs[p]);
-                p = dist[p].prevex;
+                p = dist[start][p].prevex;
             }
             path.push_back(graph.vexs[start]);
             // 打印路径
@@ -233,13 +233,7 @@ int main()
     {
         cout << "\nCalculating shortest paths from vertex " << graph.vexs[i] << ":" << endl;
         dijkstra(graph, i);
-        for (int j = 0; j < 10; j++) {
-            S[j] = false;
-        }
         printShortestPath(graph, i);
-        for (int j = 0; j < 10; j++) {
-            S[j] = false;
-        }
     }
 
     return 0;
