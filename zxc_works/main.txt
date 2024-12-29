@@ -168,7 +168,20 @@ void dijkstra(GraphMatrix& graph, int start)
     }
 }
 
-//打印迪杰斯特拉算法最短路径
+// 递归打印最短路径的辅助函数（深度优先遍历）
+void printPathDFS(int vertex, GraphMatrix& graph, int start)
+{
+    // 如果当前顶点不是起点，则继续递归打印前驱顶点
+    if (vertex != start)
+    {
+        printPathDFS(dist[start][vertex].prevex, graph, start); // 深度优先遍历
+    }
+
+    // 打印当前顶点
+    cout << graph.vexs[vertex] << " ";
+}
+
+// 打印从源点到所有其他点的最短路径（深度优先遍历）
 void printShortestPath(GraphMatrix& graph, int start)
 {
     for (int i = 0; i < graph.n; i++)
@@ -181,20 +194,10 @@ void printShortestPath(GraphMatrix& graph, int start)
         else
         {
             cout << "Length = " << dist[start][i].length << ", Path = ";
-            vector<string> path;
-            int p = i;
-            while (p != start)
-            {
-                path.push_back(graph.vexs[p]);
-                p = dist[start][p].prevex;
-            }
-            path.push_back(graph.vexs[start]);
-            // 打印路径
-            for (int j = path.size() - 1; j > 0; j--)
-                cout << path[j] << " to ";
-            cout << path[0] << endl;
+            // 调用深度优先遍历的打印函数
+            printPathDFS(i, graph, start);
+            cout << endl;
         }
-        
     }
 }
 
