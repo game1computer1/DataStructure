@@ -1,3 +1,6 @@
+// 数据结构大作业（最短路径算法）.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -34,23 +37,26 @@ Path dist[10];
 bool S[10];
 
 // 初始化迪杰斯特拉算法的辅助数据结构
-void init(GraphMatrix graph, Path dist[])
+void init(GraphMatrix graph, Path dist[],int start)
 {
     int i;
-    dist[0].length = 0; // 源点到自己的距离为0
-    dist[0].prevex = 0; // 源点没有前驱
-    dist[0].vertex = graph.vexs[0]; // 源点的信息
-    S[0] = true; // 源点加入最短路径集合
+    dist[start].length = 0; // 源点到自己的距离为0
+    dist[start].prevex = 0; // 源点没有前驱
+    dist[start].vertex = graph.vexs[start]; // 源点的信息
+    S[start] = true; // 源点加入最短路径集合
 
     // 初始化其他顶点到源点的距离
-    for (i = 1; i < graph.n; i++)
+    for (i = 0; i < graph.n; i++)
     {
-        dist[i].length = graph.arcs[0][i]; // 初始距离为邻接矩阵中的值
-        dist[i].vertex = graph.vexs[i]; // 顶点信息
-        if (dist[i].length != MAX)
-            dist[i].prevex = 0; // 如果有路径，则前驱为源点
-        else
-            dist[i].prevex = -1; // 否则前驱不存在
+        if (i != start) {
+            dist[i].length = graph.arcs[start][i]; // 初始距离为邻接矩阵中的值
+            dist[i].vertex = graph.vexs[i]; // 顶点信息
+            if (dist[i].length != MAX)
+                dist[i].prevex = start; // 如果有路径，则前驱为源点
+            else
+                dist[i].prevex = -1; // 否则前驱不存在
+        }
+        
     }
 }
 
@@ -59,8 +65,8 @@ void initgraph(GraphMatrix& graph, int length)
 {
     int i, j;
     map<string, int> point_map; // 点名与索引的映射表
-    ifstream points_file("C:\\Users\\Lenovo\\Desktop\\points.csv"); // 读取点文件
-    ifstream path_file("C:\\Users\\Lenovo\\Desktop\\paths.csv"); // 读取路径文件
+    ifstream points_file("C:\\Users\\Y1957\\Desktop\\points.csv"); // 读取点文件
+    ifstream path_file("C:\\Users\\Y1957\\Desktop\\paths.csv"); // 读取路径文件
     string line, name, from, to;
     float distance;
 
@@ -79,7 +85,7 @@ void initgraph(GraphMatrix& graph, int length)
             getline(ss, name, ','); // 读取点名
             ss >> i; // 读取点ID
             point_map[name] = i - 1; // 点名映射到索引，索引从0开始
-            graph.vexs[i - 1] = name; // 直接存储点名
+            graph.vexs[i - 1] = name;// 直接存储点名
         }
         points_file.close();
     }
@@ -104,7 +110,8 @@ void initgraph(GraphMatrix& graph, int length)
             {
                 int u = point_map[from]; // 起点索引
                 int v = point_map[to]; // 终点索引
-                graph.arcs[u][v] = distance; // 设置边的权值
+                graph.arcs[u][v] = distance;
+                graph.arcs[v][u] = distance;// 设置边的权值
             }
             else
             {
@@ -121,6 +128,68 @@ void initgraph(GraphMatrix& graph, int length)
     }
 
     graph.n = point_map.size(); // 设置图的顶点数量
+}
+
+// 在此实现迪杰斯特拉算法计算最短路径
+void dijkstra(GraphMatrix& graph, int start)
+{
+    int i, j, k;
+    float min;
+
+    // 初始化
+    init(graph, dist, start);
+
+    // Dijkstra 算法主循环
+    for (i = 1; i < graph.n; i++) 
+    {
+        // 找出未处理的最短路径顶点
+        min = MAX;
+        for (j = 0; j < graph.n; j++)
+        {
+            if (!S[j] && dist[j].length < min)
+            {
+                min = dist[j].length;
+                k = j;
+            }
+        }
+
+        // 将当前顶点k加入最短路径集合
+        S[k] = true;
+
+        // 更新与当前顶点k相邻的未处理顶点的路径信息
+        for (j = 0; j < graph.n; j++)
+        {
+            if (!S[j] && graph.arcs[k][j] != MAX && dist[k].length + graph.arcs[k][j] < dist[j].length)
+            {
+                dist[j].length = dist[k].length + graph.arcs[k][j];
+                dist[j].prevex = k;
+            }
+        }
+    }
+}
+
+//打印迪杰斯特拉算法最短路径
+void printShortestPath(GraphMatrix& graph, int start)
+{
+    for (int i = 0; i < graph.n; i++)
+    {
+        cout << "From " << graph.vexs[start] << " to " << graph.vexs[i] << " : ";
+        if (dist[i].length == MAX)
+        {
+            cout << "No path" << endl;
+        }
+        else
+        {
+            cout << "Length = " << dist[i].length << ", Path = ";
+            int p = i;
+            while (p != start)
+            {
+                cout << dist[p].vertex;
+                p = dist[p].prevex;
+            }
+            cout << dist[p].vertex << endl;
+        }
+    }
 }
 
 int main()
@@ -153,10 +222,16 @@ int main()
         cout << "Vertex " << i + 1 << ": " << graph.vexs[i] << endl;
     }
 
-    // TODO: 在此实现迪杰斯特拉算法计算最短路径
-
-
-
+    // 计算并打印从每个点到所有其他点的最短路径
+    for (int i = 0; i < graph.n; i++)
+    {
+        cout << "\nCalculating shortest paths from vertex " << graph.vexs[i] << ":" << endl;
+        dijkstra(graph, i);
+        printShortestPath(graph, i);
+        for (int j = 0; j < 10; j++) {
+            S[j] = false;
+        }
+    }
 
     return 0;
 }
