@@ -1,3 +1,6 @@
+// 数据结构大作业（最短路径算法）.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -169,10 +172,8 @@ void dijkstra(GraphMatrix& graph, int start)
 void printShortestPath(GraphMatrix& graph, int start)
 {
     for (int i = 0; i < graph.n; i++)
-    {   
-        //打印起点终点
+    {
         cout << "From " << graph.vexs[start] << " to " << graph.vexs[i] << " : ";
-        //打印路径长度
         if (dist[i].length == MAX)
         {
             cout << "No path" << endl;
@@ -180,38 +181,43 @@ void printShortestPath(GraphMatrix& graph, int start)
         else
         {
             cout << "Length = " << dist[i].length << ", Path = ";
+            vector<string> path;
             int p = i;
-            //打印路径
             while (p != start)
             {
-                cout << dist[p].vertex;
+                path.push_back(graph.vexs[p]);
                 p = dist[p].prevex;
             }
-            cout << dist[p].vertex << endl;
+            path.push_back(graph.vexs[start]);
+            // 打印路径
+            for (int j = path.size() - 1; j > 0; j--)
+                cout << path[j] << " to ";
+            cout << path[0] << endl;
         }
+        
     }
 }
 
 int main()
 {
     GraphMatrix graph;
-    graph.n = 10; // 顶点数量为10
+    graph.n = 10; // 假设顶点数量为10
 
     // 初始化图
     initgraph(graph, graph.n);
 
     // 打印邻接矩阵
-    std::cout << "Adjacency Matrix:" << std::endl;
+    cout << "Adjacency Matrix:" << endl;
     for (int i = 0; i < graph.n; i++)
     {
         for (int j = 0; j < graph.n; j++)
         {
             if (graph.arcs[i][j] == MAX)
-                std::cout << "INF" << " ";
+                cout << "INF" << " ";
             else
-                std::cout << graph.arcs[i][j] << " ";
+                cout << graph.arcs[i][j] << " ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 
 
@@ -227,8 +233,10 @@ int main()
     {
         cout << "\nCalculating shortest paths from vertex " << graph.vexs[i] << ":" << endl;
         dijkstra(graph, i);
+        for (int j = 0; j < 10; j++) {
+            S[j] = false;
+        }
         printShortestPath(graph, i);
-
         for (int j = 0; j < 10; j++) {
             S[j] = false;
         }
