@@ -31,6 +31,7 @@ typedef struct
     int prevex; // 该顶点的前驱顶点索引
 } Path;
 
+//以二维数组来记录所有路径信息
 Path dist[MAXVertex][MAXVertex];
 
 // 判断某顶点是否已在最短路径集合中的布尔数组
@@ -168,7 +169,7 @@ void dijkstra(GraphMatrix& graph, int start)
     }
 }
 
-// 递归打印最短路径的辅助函数（深度优先遍历）
+// 深度优先遍历打印最短路径的辅助函数
 void printPathDFS(int vertex, GraphMatrix& graph, int start)
 {
     // 如果当前顶点不是起点，则继续递归打印前驱顶点
@@ -181,8 +182,8 @@ void printPathDFS(int vertex, GraphMatrix& graph, int start)
     cout << graph.vexs[vertex] << " ";
 }
 
-// 打印从源点到所有其他点的最短路径（深度优先遍历）
-void printShortestPath(GraphMatrix& graph, int start)
+// 深度优先遍历打印从源点到所有其他点的最短路径
+void printAllShortestPath(GraphMatrix& graph, int start)
 {
     for (int i = 0; i < graph.n; i++)
     {
@@ -201,6 +202,31 @@ void printShortestPath(GraphMatrix& graph, int start)
     }
 }
 
+// 深度优先遍历打印从起点到终点的最短路径
+void printShortestPathDFS(string start, GraphMatrix& graph, string end) {
+    int s = -1, e = -1;
+    cout << "From " << start << " to " << end << " : ";
+    for (int i = 0; i < graph.n; i++) {
+        if (graph.vexs[i] == start) s = i;
+        if (graph.vexs[i] == end) e = i;
+    }
+    if (s < 0 || e < 0) {
+        cerr << "The start or end is error" << end;
+    }
+    else {
+        if (dist[s][e].length == MAX)
+        {
+            cout << "No path" << endl;
+        }
+        else
+        {
+            cout << "Length = " << dist[s][e].length << ", Path = ";
+            // 调用深度优先遍历的打印函数
+            printPathDFS(e, graph, s);
+            cout << endl;
+        }
+    }
+}
 int main()
 {
     GraphMatrix graph;
@@ -236,8 +262,15 @@ int main()
     {
         cout << "\nCalculating shortest paths from vertex " << graph.vexs[i] << ":" << endl;
         dijkstra(graph, i);
-        printShortestPath(graph, i);
+        printAllShortestPath(graph, i);
     }
 
+    //这里输入指定目标点间的距离
+    /*string S, E;
+    cout << "imput start: ";
+    cin >> S;
+    cout << "imput end: ";
+    cin >> E;
+    printShortestPathDFS(S, graph, E);*/
     return 0;
 }
