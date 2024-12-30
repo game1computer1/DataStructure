@@ -1,6 +1,6 @@
 // 数据结构大作业（最短路径算法）.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
-
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -9,6 +9,8 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <locale>
+#include <codecvt>
 
 using namespace std;
 
@@ -185,7 +187,7 @@ void printPathDFS(int vertex, GraphMatrix& graph, int start)
 // 深度优先遍历打印从源点到所有其他点的最短路径
 void printAllShortestPath(GraphMatrix& graph)
 {
-    cout << "输入源点ID，广度遍历打印其余点" << endl;
+    cout << "Input the source point ID and perform breadth-first traversal to print the remaining points: " << endl;
     int start;
     cin>>start;
     int n = start;
@@ -212,7 +214,7 @@ void printAllShortestPath(GraphMatrix& graph)
 // 打印从起点到终点的最短路径
 void printShortestPathDFS( GraphMatrix& graph) {
     int S, E;
-    cout << "这里输入指定目标点ID,计算两点间的最小距离" << endl;
+    cout << "Input the target point ID and calculate the minimum distance between the two points:" << endl;
     cout << "imput start: ";
     cin >> S;
     cout << "imput end: ";
@@ -233,8 +235,12 @@ void printShortestPathDFS( GraphMatrix& graph) {
         }
     
 }
+
+
 int main()
 {
+    SetConsoleOutputCP(CP_UTF8);
+
     GraphMatrix graph;
     graph.n = 10; // 假设顶点数量为10
 
