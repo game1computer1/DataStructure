@@ -183,38 +183,52 @@ void printPathDFS(int vertex, GraphMatrix& graph, int start)
 }
 
 // 深度优先遍历打印从源点到所有其他点的最短路径
-void printAllShortestPath(GraphMatrix& graph, int start)
+void printAllShortestPath(GraphMatrix& graph)
 {
+    cout << "输入源点ID，广度遍历打印其余点" << endl;
+    int start;
+    cin>>start;
+    int n = start;
+
     for (int i = 0; i < graph.n; i++)
     {
-        cout << "From " << graph.vexs[start] << " to " << graph.vexs[i] << " : ";
-        if (dist[start][i].length == MAX)
+        cout << "From " << graph.vexs[start] << " to " << graph.vexs[n] << " : ";
+        if (dist[start][n].length == MAX)
         {
             cout << "No path" << endl;
         }
         else
         {
-            cout << "Length = " << dist[start][i].length << ", Path = ";
+            cout << "Length = " << dist[start][n].length << ", Path = ";
             // 调用打印函数
-            printPathDFS(i, graph, start);
+            printPathDFS(n, graph, start);
             cout << endl;
         }
+        n++;
+        n = n % 10;
     }
 }
 
 // 打印从起点到终点的最短路径
-void printShortestPathDFS(int start, GraphMatrix& graph, int end) {
-    cout << "From " << dist[start][start].vertex << " to " << dist[end][end].vertex << " : ";
+void printShortestPathDFS( GraphMatrix& graph) {
+    int S, E;
+    cout << "这里输入指定目标点ID,计算两点间的最小距离" << endl;
+    cout << "imput start: ";
+    cin >> S;
+    cout << "imput end: ";
+    cin >> E;
+  
+    cout << "From " << dist[S][S].vertex << " to " << dist[E][E].vertex << " : ";
      
-        if (dist[start][end].length == MAX)
+        if (dist[S][E].length == MAX)
         {
             cout << "No path" << endl;
         }
         else
         {
-            cout << "Length = " << dist[start][end].length << ", Path = ";
+            cout << "Length = " << dist[S][E].length << ", Path = ";
             // 调用打印函数
-            printPathDFS(end, graph, start);
+            printPathDFS(E, graph, S);
             cout << endl;
         }
     
@@ -246,23 +260,22 @@ int main()
     cout << "Graph vertices:\n";
     for (int i = 0; i < graph.n; i++)
     {
-        cout << "Vertex " << i + 1 << ": " << graph.vexs[i] << endl;
+        cout << "Vertex " << i << ": " << graph.vexs[i] << endl;
     }
 
-    // 计算并打印从每个点到所有其他点的最短路径
+    //计算从每个点到所有其他点的最短路径
     for (int i = 0; i < graph.n; i++)
     {
-        cout << "\nCalculating shortest paths from vertex " << graph.vexs[i] << ":" << endl;
         dijkstra(graph, i);
-        printAllShortestPath(graph, i);
+        //printAllShortestPath(graph, i);
     }
 
-    cout << "这里输入指定目标点间的距离" << endl;
-    int S, E;
-    cout << "imput start: ";
-    cin >> S;
-    cout << "imput end: ";
-    cin >> E;
-    printShortestPathDFS(S, graph, E);
+
+   //输入源点ID，广度遍历打印其余点
+    printAllShortestPath(graph);
+
+    //这里输入指定目标点ID,计算两点间的最小距离
+    printShortestPathDFS(graph);
+
     return 0;
 }
