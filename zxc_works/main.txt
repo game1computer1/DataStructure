@@ -169,13 +169,13 @@ void dijkstra(GraphMatrix& graph, int start)
     }
 }
 
-// 深度优先遍历打印最短路径的辅助函数
+// 打印最短路径的辅助函数
 void printPathDFS(int vertex, GraphMatrix& graph, int start)
 {
     // 如果当前顶点不是起点，则继续递归打印前驱顶点
     if (vertex != start)
     {
-        printPathDFS(dist[start][vertex].prevex, graph, start); // 深度优先遍历
+        printPathDFS(dist[start][vertex].prevex, graph, start); 
     }
 
     // 打印当前顶点
@@ -195,37 +195,29 @@ void printAllShortestPath(GraphMatrix& graph, int start)
         else
         {
             cout << "Length = " << dist[start][i].length << ", Path = ";
-            // 调用深度优先遍历的打印函数
+            // 调用打印函数
             printPathDFS(i, graph, start);
             cout << endl;
         }
     }
 }
 
-// 深度优先遍历打印从起点到终点的最短路径
-void printShortestPathDFS(string start, GraphMatrix& graph, string end) {
-    int s = -1, e = -1;
-    cout << "From " << start << " to " << end << " : ";
-    for (int i = 0; i < graph.n; i++) {
-        if (graph.vexs[i] == start) s = i;
-        if (graph.vexs[i] == end) e = i;
-    }
-    if (s < 0 || e < 0) {
-        cerr << "The start or end is error" << end;
-    }
-    else {
-        if (dist[s][e].length == MAX)
+// 打印从起点到终点的最短路径
+void printShortestPathDFS(int start, GraphMatrix& graph, int end) {
+    cout << "From " << dist[start][start].vertex << " to " << dist[end][end].vertex << " : ";
+     
+        if (dist[start][end].length == MAX)
         {
             cout << "No path" << endl;
         }
         else
         {
-            cout << "Length = " << dist[s][e].length << ", Path = ";
-            // 调用深度优先遍历的打印函数
-            printPathDFS(e, graph, s);
+            cout << "Length = " << dist[start][end].length << ", Path = ";
+            // 调用打印函数
+            printPathDFS(end, graph, start);
             cout << endl;
         }
-    }
+    
 }
 int main()
 {
@@ -265,12 +257,12 @@ int main()
         printAllShortestPath(graph, i);
     }
 
-    //这里输入指定目标点间的距离
-    /*string S, E;
+    cout << "这里输入指定目标点间的距离" << endl;
+    int S, E;
     cout << "imput start: ";
     cin >> S;
     cout << "imput end: ";
     cin >> E;
-    printShortestPathDFS(S, graph, E);*/
+    printShortestPathDFS(S, graph, E);
     return 0;
 }
