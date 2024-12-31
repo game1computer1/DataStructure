@@ -302,7 +302,6 @@ int main()
         }
         cout << endl;
     }
-    BFS(graph, 0);
 
     // 打印邻接矩阵的顶点信息
     cout << "Graph vertices:\n";
