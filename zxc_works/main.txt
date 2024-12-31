@@ -1,6 +1,7 @@
 // 数据结构大作业（最短路径算法）.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
 #include <windows.h>
+#include <queue>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -184,10 +185,10 @@ void printPathDFS(int vertex, GraphMatrix& graph, int start)
     cout << graph.vexs[vertex] << " ";
 }
 
-// 深度优先遍历打印从源点到所有其他点的最短路径
+// 遍历打印从源点到所有其他点的最短路径
 void printAllShortestPath(GraphMatrix& graph)
 {
-    cout << "Input the source point ID and perform breadth-first traversal to print the remaining points: " << endl;
+    cout << "Input the source point ID and calculate the minimum distance between all points: " << endl;
     int start;
     cin>>start;
     int n = start;
@@ -237,6 +238,47 @@ void printShortestPathDFS( GraphMatrix& graph) {
 }
 
 
+
+void BFS(GraphMatrix& graph, int start) {
+    vector<bool> visited(graph.n, false);  // 记录每个顶点是否被访问
+    queue<int> q;  // 使用队列进行BFS
+
+   
+    visited[start] = true;  // 标记起始顶点为已访问
+    q.push(start);  // 将起始顶点加入队列
+
+    
+    cout << "BFS Traversal starting from vertex " << graph.vexs[start] << ": " << endl;
+
+    while (!q.empty()) {
+        int v = q.front();  // 获取队列头部元素
+        q.pop();  // 出队
+      
+        // 遍历所有邻接节点
+        for (int i = 0; i < graph.n; i++) {
+            // 如果顶点v和i之间有边，并且i还没有被访问
+            if (graph.arcs[v][i] != MAX && !visited[i]) {
+                // 打印路径
+                cout << "From " << graph.vexs[start] << " to " << graph.vexs[i] << " : ";
+                if (dist[start][i].length == MAX)
+                {
+                    cout << "No path" << endl;
+                }
+                else
+                {
+                    cout << "Length = " << dist[start][i].length << ", Path = ";
+                    // 调用打印函数
+                    printPathDFS(i, graph, start);
+                    cout << endl;
+                }
+
+                visited[i] = true;  // 标记i为已访问
+                q.push(i);  // 将i加入队列
+            }
+        }
+    }
+    cout << endl;
+}
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
@@ -260,7 +302,7 @@ int main()
         }
         cout << endl;
     }
-
+    BFS(graph, 0);
 
     // 打印邻接矩阵的顶点信息
     cout << "Graph vertices:\n";
@@ -273,12 +315,15 @@ int main()
     for (int i = 0; i < graph.n; i++)
     {
         dijkstra(graph, i);
-        //printAllShortestPath(graph, i);
     }
 
-
-   //输入源点ID，广度遍历打印其余点
+   //输入源点ID，打印其余点
     printAllShortestPath(graph);
+
+    //输入源点ID，广度优先打印其余点
+    cout << "Imput the source point ID, and the breadth priority prints the rest of the points:" << endl;
+    int s; cin >> s;
+    BFS(graph, s);
 
     //这里输入指定目标点ID,计算两点间的最小距离
     printShortestPathDFS(graph);
